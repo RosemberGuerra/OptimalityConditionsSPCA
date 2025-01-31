@@ -111,33 +111,5 @@ ggplot(results_test, aes(x = card, y = p_val)) +
   theme(legend.position = "none")  # Clean up the legend
 
 # Save the plot as a PDF
-ggsave("../../Sparse_operators/Figures/permutation_test.pdf", width = 10, height = 6, units = "in")
+ggsave("../figures/permutation_test.pdf", width = 10, height = 6, units = "in")
 
-############################################
-# Filter and Visualize Significant Results #
-############################################
-results_test_sig <- results_test %>% filter(p_val < 0.05)
-
-ggplot(results_test_sig, aes(x = card, y = p_val)) +
-  geom_point(size = 2, alpha = 0.8) +
-  facet_grid(testing ~ p, scales = "free_x") +
-  labs(x = 'Number of Features', y = 'Permutation Test p-Value') +
-  theme_minimal()
-
-# Save filtered plot as a PDF
-ggsave("../../Sparse_operators/Figures/permutation_test_adj.pdf", 
-       width = 10, height = 6, units = "in")
-
-############################################
-# Additional Visualization (Redundant)     #
-############################################
-# Recreate the original plot for review
-ggplot(results_test, aes(x = card, y = p_val)) +
-  geom_point(aes(color = p_val > 0.05, alpha = p_val > 0.05), size = 2) +
-  scale_color_manual(values = c("black", "gray60")) +
-  scale_alpha_manual(values = c(1, 0.8)) +
-  geom_hline(yintercept = 0.05, color = "black", linetype = "dashed") +
-  facet_grid(testing ~ p, scales = "free_x") +
-  labs(x = 'Number of Features', y = 'Permutation Test p-Value') +
-  theme_minimal() +
-  theme(legend.position = "none")

@@ -96,36 +96,106 @@ levels(results$penalty) <- c('L1', 'L0', 'SCAD')
 ############################################
 # Visualization: Variance vs. Sparsity     #
 ############################################
-# Plot the trade-off curve for variance explained vs. cardinality
+
 ggplot(results, aes(x = card, y = pev, color = penalty, shape = penalty)) +
-  stat_summary(fun = mean, geom = "line", size = 0.5) +
+  # geom_hline(yintercept = 100, color = "red", linetype = "dashed") +  # Red horizontal line
+  stat_summary(fun = mean, geom = "line", size = .5) +
   stat_summary(fun = mean, geom = "point", size = 1.5) +
   facet_grid(n ~ p, scales = "free_x") +
-  scale_color_grey(start = 0.2, end = 0.8) +
-  scale_shape_manual(values = c(16, 17, 15)) +
-  labs(x = 'Number of Features', y = 'Mean Proportion of Variance Explained') +
+  scale_color_grey(start = 0.2, end = 0.8) +  # Use grayscale for colors
+  scale_shape_manual(values = c(16, 17, 15)) +  # Assign distinct shapes for penalties
+  labs(
+    # title = 'Trade-off curve of mean variance explained vs. alpha with dispersion',
+    x = 'Number of features',
+    y = 'Mean Proportion of Variance Explained'
+  ) +
   theme_minimal() +
-  theme(legend.title = element_text(size = 12), legend.text = element_text(size = 10))
+  theme(
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )
 
-# Save the plot
-ggsave("../../Sparse_operators/Figures/tradeOff-var_adj-car.pdf", width = 10, height = 6, units = "in")
+# save plot as pdf
+ggsave("../figures/tradeOff-var-car.pdf", 
+       width = 10, height = 6, units = "in")
 
 ############################################
-# Filter and Additional Visualization      #
+# Visualization: adjusted Variance vs. Sparsity     #
 ############################################
-# Filter results to exclude specific cardinality values
-results_filter <- results %>% filter(!card %in% c(20, 100, 200))
+ggplot(results, aes(x = card, y = pev_adj, color = penalty, shape = penalty)) +
+  # geom_hline(yintercept = 100, color = "red", linetype = "dashed") +  # Red horizontal line
+  stat_summary(fun = mean, geom = "line", size = .5) +
+  stat_summary(fun = mean, geom = "point", size = 1.5) +
+  facet_grid(n ~ p, scales = "free_x") +
+  scale_color_grey(start = 0.2, end = 0.8) +  # Use grayscale for colors
+  scale_shape_manual(values = c(16, 17, 15)) +  # Assign distinct shapes for penalties
+  labs(
+    # title = 'Trade-off curve of mean variance explained vs. alpha with dispersion',
+    x = 'Number of features',
+    y = 'Mean Proportion of Variance Explained'
+  ) +
+  theme_minimal() +
+  theme(
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )
 
-# Plot the number of iterations vs. sparsity
+# save plot as pdf
+ggsave("../figures/tradeOff-var_adj-car.pdf", 
+       width = 10, height = 6, units = "in")
+
+results_filter = results %>% filter(card != c(20,100,200))
+
 ggplot(results_filter, aes(x = card, y = spca.iter, color = penalty, shape = penalty)) +
-  stat_summary(fun = mean, geom = "line", size = 0.5) +
+  # geom_hline(yintercept = 100, color = "red", linetype = "dashed") +  # Red horizontal line
+  stat_summary(fun = mean, geom = "line", size = .5) +
   stat_summary(fun = mean, geom = "point", size = 1.5) +
   facet_grid(n ~ p, scales = "free_x") +
-  scale_color_grey(start = 0.2, end = 0.8) +
-  scale_shape_manual(values = c(16, 17, 15)) +
-  labs(x = 'Number of Features', y = 'Average Number of Iterations') +
+  scale_color_grey(start = 0.2, end = 0.8) +  # Use grayscale for colors
+  scale_shape_manual(values = c(16, 17, 15)) +  # Assign distinct shapes for penalties
+  labs(
+    # title = 'Trade-off curve of mean variance explained vs. alpha with dispersion',
+    x = 'Number of features',
+    y = 'Average Number of Iterations'
+  ) +
   theme_minimal() +
-  theme(legend.title = element_text(size = 12), legend.text = element_text(size = 10))
+  theme(
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )
 
-# Save results to file
-save(results, file = paste0('results', S, '.RData'))
+
+# save plot as pdf
+ggsave("../figures/tradeOff-iter-car.pdf", 
+       width = 10, height = 6, units = "in")
+
+results_filter_time = results %>% filter(spca.time < 1 & card != c(20,100,200))
+
+ggplot(results_filter_time, aes(x = card, y = spca.time, color = penalty, shape = penalty)) +
+  # geom_hline(yintercept = 100, color = "red", linetype = "dashed") +  # Red horizontal line
+  stat_summary(fun = mean, geom = "line", size = .5) +
+  stat_summary(fun = mean, geom = "point", size = 1.5) +
+  facet_grid(n ~ p, scales = "free_x") +
+  scale_color_grey(start = 0.2, end = 0.8) +  # Use grayscale for colors
+  scale_shape_manual(values = c(16, 17, 15)) +  # Assign distinct shapes for penalties
+  labs(
+    # title = 'Trade-off curve of mean variance explained vs. alpha with dispersion',
+    x = 'Number of features',
+    y = 'Average Time (sec)'
+  ) +
+  theme_minimal() +
+  theme(
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )
+
+# save plot as pdf
+ggsave("../figures/tradeOff-time-car.pdf", 
+       width = 10, height = 6, units = "in")
+
+# save results 
+save(results, file =paste0('results',S,'.RData'))
+
+
+
+
