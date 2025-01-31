@@ -54,7 +54,7 @@ for (i in 1:nrow(param_grid)) {
   s <- param_grid$s[i]
   
   # Generate a data matrix with normal distribution
-  X <- normal_data(n, p, mu, sigma)
+  X <- generate_ordered_eigen_data(n, p, mu, sigma)
   
   # Scale the data matrix to have zero mean and unit variance
   X <- scale(X)
