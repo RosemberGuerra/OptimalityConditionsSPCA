@@ -4,9 +4,7 @@
 # Date: 30/10/2024                                            #
 ###############################################################
 
-############################################
-# Penalty Functions                        #
-############################################
+### Penalty Functions ###
 # Define penalty functions outside main functions to avoid redundancy
 Penalty_functions_sol <- list(
   l1 = function(x, lambda) {
@@ -25,9 +23,8 @@ Penalty_functions_sol <- list(
   }
 )
 
-############################################
-# Alternating Sparse PCA Function          #
-############################################
+### Alternating Sparse PCA Function#######
+
 alt_spca <- function(X, w0 = NULL, alpha, penalty = 'l1', maxiter = 1000, tol = 1e-6) {
   # Perform sparse PCA using alternating optimization
   # Parameters:
@@ -69,9 +66,8 @@ alt_spca <- function(X, w0 = NULL, alpha, penalty = 'l1', maxiter = 1000, tol = 
   return(list(w = w, iter = iter, time = runningtime[[3]]))
 }
 
-############################################
-# Multivariate Sparse PCA with Deflation   #
-############################################
+### Multivariate Sparse PCA with Deflation   #########
+
 alt_spca_multi <- function(X, W0 = NULL, K, alpha, penalty = 'l1') {
   # Perform multivariate sparse PCA with deflation
   if (K > ncol(X)) stop("K cannot exceed the number of columns in X.")
@@ -87,11 +83,10 @@ alt_spca_multi <- function(X, W0 = NULL, K, alpha, penalty = 'l1') {
   return(W)
 }
 
-############################################
-# Performance Metrics and Utility Functions #
-############################################
+### Performance Metrics and Utility Functions ######
 
-# Compare sparse PCA patterns to PCA patterns
+
+## Compare sparse PCA patterns to PCA patterns
 pca_diff <- function(w, X) {
   nz <- which(w != 0)
   X <- X[, nz]
@@ -100,7 +95,7 @@ pca_diff <- function(w, X) {
   norm(abs(w) - abs(w_pca), type = "2")
 }
 
-# Define penalty functions for objective calculations
+## Define penalty functions for objective calculations
 Penalty_functions <- list(
   l1 = function(x, lambda) lambda * abs(x),
   l0 = function(x, lambda) lambda * (x != 0),
@@ -114,7 +109,7 @@ Penalty_functions <- list(
   }
 )
 
-# Objective function for sparse PCA
+## Objective function for sparse PCA
 space_objective <- function(X, w, alpha, penalty = 'l1') {
   if (!(penalty %in% names(Penalty_functions))) {
     stop("Invalid penalty type.")
@@ -123,7 +118,7 @@ space_objective <- function(X, w, alpha, penalty = 'l1') {
   norm(X %*% w, type = "F") - sum(penaltyfun(w, alpha))
 }
 
-# Objective function difference with PCA
+## Objective function difference with PCA
 obj_pca_diff <- function(X, w, alpha = 0, penalty = 'l1') {
   nz <- which(w != 0)
   w_pca <- rep(0, ncol(X))
@@ -131,13 +126,13 @@ obj_pca_diff <- function(X, w, alpha = 0, penalty = 'l1') {
   space_objective(X, w, alpha, penalty) - space_objective(X, w_pca, alpha, penalty)
 }
 
-# Variance calculation
+## Variance calculation
 variance <- function(X, w) {
   w_pca <- prcomp(X)
   (t(w) %*% t(X) %*% X %*% w) / w_pca$sdev[1]^2
 }
 
-# Adjusted variance calculation
+## Adjusted variance calculation
 adj_variance <- function(X, w) {
   indexw <- which(w != 0)
   X_adj <- X[, indexw]
@@ -146,12 +141,12 @@ adj_variance <- function(X, w) {
   (t(w_adj) %*% t(X_adj) %*% X_adj %*% w_adj) / w_pca$sdev[1]^2
 }
 
-# Cardinality (number of non-zero elements)
+## Cardinality (number of non-zero elements)
 cardinality <- function(w) {
   sum(w != 0)
 }
 
-# Permutation Test for Sparse PCA Results
+## Permutation Test for Sparse PCA Results
 permutation_test <- function(values_A, values_B, n_permutations = 10000, alternative = "two.sided") {
   observed_diff <- mean(values_A) - mean(values_B)
   combined <- c(values_A, values_B)
