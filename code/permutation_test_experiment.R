@@ -36,11 +36,11 @@ length(u_card)
 # Initialize a data frame to store permutation test results
 results_test <- data.frame()
 
-############################################
-# Perform Permutation Tests                #
-############################################
+
+#### Perform Permutation Tests ####
+
 # Set the number of permutations
-Npermt <- 100
+Npermt <- 1000
 
 # Initialize progress bar
 pb <- txtProgressBar(min = 0, max = length(u_card), style = 3)
@@ -92,12 +92,15 @@ for (i in u_card) {
 # Close progress bar
 close(pb)
 
-############################################
-# Visualize Permutation Test Results       #
-############################################
+
+####Visualize Permutation Test Results ####
+
 # Convert columns to factors for plotting
 results_test$testing <- as.factor(results_test$testing)
 results_test$p <- factor(as.factor(results_test$p), levels = c('p = 20', 'p = 100', 'p = 200'))
+
+# save the results #
+save(results_test, file =  paste0('results_pt_',Npermt,'RData'))
 
 # Plot permutation test p-values
 ggplot(results_test, aes(x = card, y = p_val)) +
@@ -108,7 +111,11 @@ ggplot(results_test, aes(x = card, y = p_val)) +
   facet_grid(testing ~ p, scales = "free_x") +
   labs(x = 'Number of Features', y = 'Permutation Test p-Value') +
   theme_minimal() +
-  theme(legend.position = "none")  # Clean up the legend
+  theme(legend.position = "none",
+        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+        axis.text = element_text(size = 12),
+        strip.text = element_text(size = 14)
+        )  # Clean up the legend
 
 # Save the plot as a PDF
 ggsave("../figures/permutation_test.pdf", width = 10, height = 6, units = "in")

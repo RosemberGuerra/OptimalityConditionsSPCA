@@ -7,7 +7,7 @@
 # Set the working directory to the location of this file
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# Load required libraries
+#### Load required libraries ####
 library(foreach)      # Parallel processing support
 library(doParallel)   # Parallel backend for foreach
 library(dplyr)        # Data manipulation
@@ -23,16 +23,16 @@ source('spca_estimations.R')
 # Set seed for reproducibility
 set.seed(123)
 
-############################################
-# Parallel Processing Setup                #
-############################################
+
+#### Parallel Processing Setup ####
+
 num_cores <- detectCores() - 2  # Use all but two cores for parallelization
 cl <- makeCluster(num_cores)
 registerDoParallel(cl)
 
-############################################
-# Parameter Initialization                 #
-############################################
+
+#### Parameter Initialization ####
+
 S <- 1000                          # Number of simulations
 n <- 100                           # Number of observations
 p <- c(20, 100, 200)               # Number of variables
@@ -45,15 +45,15 @@ alpha <- seq(from = 0, to = 1.5, by = 1 / n_alpha) # Regularization parameters
 param_grid <- expand.grid(n = n, p = p, s = c(1:S), penalty = penalties, alpha = alpha)
 total_iterations <- nrow(param_grid)  # Total number of iterations
 
-############################################
-# Results Initialization                   #
-############################################
+
+#### Results Initialization ####
+
 # Create an empty data frame to store the results
 results <- data.frame()
 
-############################################
-# Simulation Loop with Parallelization     #
-############################################
+
+#### Simulation Loop with Parallelization ####
+
 # Perform parallel computation for each parameter set in the grid
 results <- foreach(i = 1:total_iterations, .combine = rbind, .packages = c('dplyr')) %dopar% {
   # Source the script that contains the functions (to ensure availability in each worker)
@@ -82,9 +82,9 @@ results <- foreach(i = 1:total_iterations, .combine = rbind, .packages = c('dply
 # Stop and close the parallel cluster
 stopCluster(cl)
 
-############################################
-# Results Post-Processing                  #
-############################################
+
+#### Results Post-Processing ####
+
 # Convert numeric parameters to factors for plotting
 results$n <- as.factor(results$n)
 levels(results$n) <- c('n = 100')
@@ -93,36 +93,38 @@ levels(results$p) <- c('p = 20', 'p = 100', 'p = 200')
 results$penalty <- as.factor(results$penalty)
 levels(results$penalty) <- c('L1', 'L0', 'SCAD')
 
-############################################
-# Visualization: Variance vs. Sparsity     #
-############################################
 
-ggplot(results, aes(x = card, y = pev, color = penalty, shape = penalty)) +
-  # geom_hline(yintercept = 100, color = "red", linetype = "dashed") +  # Red horizontal line
+#### Visualization: Variance vs. Sparsity     ####
+
+ggplot(results, aes(x = card, y = pev/100, color = penalty, shape = penalty)) +
   stat_summary(fun = mean, geom = "line", size = .5) +
   stat_summary(fun = mean, geom = "point", size = 1.5) +
   facet_grid(n ~ p, scales = "free_x") +
-  scale_color_grey(start = 0.2, end = 0.8) +  # Use grayscale for colors
-  scale_shape_manual(values = c(16, 17, 15)) +  # Assign distinct shapes for penalties
+  scale_color_grey(start = 0.2, end = 0.8) +
+  scale_shape_manual(values = c(16, 17, 15)) +
   labs(
-    # title = 'Trade-off curve of mean variance explained vs. alpha with dispersion',
     x = 'Number of features',
     y = 'Mean Proportion of Variance Explained'
   ) +
   theme_minimal() +
   theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    axis.text = element_text(size = 12),
+    strip.text = element_text(size = 14),
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )
+
 
 # save plot as pdf
 ggsave("../figures/tradeOff-var-car.pdf", 
        width = 10, height = 6, units = "in")
 
-############################################
-# Visualization: adjusted Variance vs. Sparsity     #
-############################################
-ggplot(results, aes(x = card, y = pev_adj, color = penalty, shape = penalty)) +
+
+
+# Visualization: adjusted Variance vs. Sparsity #
+
+ggplot(results, aes(x = card, y = pev_adj/100, color = penalty, shape = penalty)) +
   # geom_hline(yintercept = 100, color = "red", linetype = "dashed") +  # Red horizontal line
   stat_summary(fun = mean, geom = "line", size = .5) +
   stat_summary(fun = mean, geom = "point", size = 1.5) +
@@ -136,9 +138,13 @@ ggplot(results, aes(x = card, y = pev_adj, color = penalty, shape = penalty)) +
   ) +
   theme_minimal() +
   theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    axis.text = element_text(size = 12),
+    strip.text = element_text(size = 14),
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )
+
 
 # save plot as pdf
 ggsave("../figures/tradeOff-var_adj-car.pdf", 
@@ -160,9 +166,13 @@ ggplot(results_filter, aes(x = card, y = spca.iter, color = penalty, shape = pen
   ) +
   theme_minimal() +
   theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    axis.text = element_text(size = 12),
+    strip.text = element_text(size = 14),
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )
+
 
 
 # save plot as pdf
@@ -185,9 +195,13 @@ ggplot(results_filter_time, aes(x = card, y = spca.time, color = penalty, shape 
   ) +
   theme_minimal() +
   theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    axis.text = element_text(size = 12),
+    strip.text = element_text(size = 14),
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )
+
 
 # save plot as pdf
 ggsave("../figures/tradeOff-time-car.pdf", 
