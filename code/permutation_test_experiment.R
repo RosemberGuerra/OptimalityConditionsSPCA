@@ -100,7 +100,7 @@ results_test$testing <- as.factor(results_test$testing)
 results_test$p <- factor(as.factor(results_test$p), levels = c('p = 20', 'p = 100', 'p = 200'))
 
 # save the results #
-save(results_test, file =  paste0('results_pt_',Npermt,'RData'))
+save(results_test, file =  paste0('results_pt_.',Npermt,'RData'))
 
 # Plot permutation test p-values
 ggplot(results_test, aes(x = card, y = p_val)) +

@@ -110,7 +110,7 @@ ggplot(results, aes(x = card, y = pev/100, color = penalty, shape = penalty)) +
   theme(
     panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
     axis.text = element_text(size = 12),
-    strip.text = element_text(size = 14),
+    strip.text = element_text(size = 12),
     legend.title = element_text(size = 12),
     legend.text = element_text(size = 10)
   )
