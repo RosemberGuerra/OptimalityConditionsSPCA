@@ -100,23 +100,41 @@ results_test$testing <- as.factor(results_test$testing)
 results_test$p <- factor(as.factor(results_test$p), levels = c('p = 20', 'p = 100', 'p = 200'))
 
 # save the results #
-save(results_test, file =  paste0('results_pt_.',Npermt,'RData'))
+save(results_test, file =  paste0('results_pt_',Npermt,'.RData'))
 
 # Plot permutation test p-values
 ggplot(results_test, aes(x = card, y = p_val)) +
-  geom_point(aes(color = p_val > 0.05, alpha = p_val > 0.05), size = 2) +
-  scale_color_manual(values = c("black", "gray60")) +  # Black for ≤ 0.05, gray for > 0.05
-  scale_alpha_manual(values = c(1, 0.8)) +            # Adjust opacity for significant points
-  geom_hline(yintercept = 0.05, color = "black", linetype = "dashed") +  # Significance threshold
+  geom_point(aes(color = p_val > 0.05, alpha = p_val > 0.05), size = 2.5) +
+  scale_color_manual(
+    name = "p-value > 0.05",
+    values = c("FALSE" = "black", "TRUE" = "gray40"),
+    labels = c("≤ 0.05", "> 0.05")
+  ) +
+  scale_alpha_manual(
+    values = c("FALSE" = 1, "TRUE" = 0.8),
+    guide = "none"
+  ) +
+  geom_hline(yintercept = 0.05, color = "black", linetype = "dashed") +
   facet_grid(testing ~ p, scales = "free_x") +
-  labs(x = 'Number of Features', y = 'Permutation Test p-Value') +
-  theme_minimal() +
-  theme(legend.position = "none",
-        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
-        axis.text = element_text(size = 12),
-        strip.text = element_text(size = 14)
-        )  # Clean up the legend
+  labs(
+    x = 'Number of Features',
+    y = 'Permutation Test p-Value'
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),
+    panel.spacing = unit(1, "lines"),
+    strip.background = element_rect(fill = "white", color = "black"),
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13),
+    legend.position = "bottom",
+    legend.box = "horizontal",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 11)
+  )
 
 # Save the plot as a PDF
-ggsave("../figures/permutation_test.pdf", width = 10, height = 6, units = "in")
+ggsave("../figures/permutation_test.pdf",
+       width = 10, height = 6, units = "in")
 
