@@ -106,7 +106,7 @@ save(results_test, file =  paste0('results_pt_',Npermt,'.RData'))
 ggplot(results_test, aes(x = card, y = p_val)) +
   geom_point(aes(color = p_val > 0.05, alpha = p_val > 0.05), size = 2.5) +
   scale_color_manual(
-    name = "p-value > 0.05",
+    name = "p-value:",
     values = c("FALSE" = "black", "TRUE" = "gray40"),
     labels = c("≤ 0.05", "> 0.05")
   ) +
@@ -131,7 +131,7 @@ ggplot(results_test, aes(x = card, y = p_val)) +
     legend.position = "bottom",
     legend.box = "horizontal",
     legend.title = element_text(size = 12),
-    legend.text = element_text(size = 11)
+    legend.text = element_text(size = 12)
   )
 
 # Save the plot as a PDF
