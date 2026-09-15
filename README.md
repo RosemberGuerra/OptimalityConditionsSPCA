@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains code and scripts for conducting numerical experiments related to Optimality Conditions for Penalized Sparse PCA. The experiments explore the trade-offs between variance explained and sparsity and compare different penalties (L1, L0, SCAD).
+This repository contains code and scripts for result replication of numerical experiments related to **Optimality Conditions for Penalized Sparse PCA**[(paper)](https://link.springer.com/article/10.1007/s11081-025-10021-0). The experiments explore the trade-offs between variance explained and sparsity and compare different penalties (L1, L0, SCAD).
 
 The main goals of this experiment are:
 - Generate synthetic datasets for simulations.
